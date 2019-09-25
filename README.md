@@ -18,7 +18,9 @@
     - 액세스가 거부되면 API Gateway는 적절한 HTTP 상태 코드(예: 403 ACCESS_DENIED)를 반환합니다.
     - 액세스가 허용되면 API Gateway는 메서드를 실행합니다. 권한 부여자 설정에서 캐싱이 활성화된 경우, API Gateway는 Lambda 권한 부여자 함수를 다시 호출할 필요가 없도록 정책을 캐싱합니다.
 
-> ### 1. 구성도
+---
+
+> ### 1. 개발 구성도
 ![Lambda 구성도](images/LambdaCustomAuthR.jpeg)
 
 > ### 2. API Gateway
@@ -173,10 +175,12 @@ var generatePolicy = function(principalId, effect, resource) {
     ```json
     [
         {
-            "key":"authorizationToken",      "value":"********************"
+            "key":"authorizationToken",
+            "value":"********************"
         },
         {
-            "key":"methodArn","value":"arn:aws:execute-api:ap-northeast-2:............:xxxxxxxxxx/*/GET/"
+            "key":"methodArn",
+            "value":"arn:aws:execute-api:ap-northeast-2:............:xxxxxxxxxx/*/GET/"
         }
     ]
     ```
