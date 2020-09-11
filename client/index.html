@@ -6,13 +6,14 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title></title>  
         <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-
     </head>
     <body>
         <script type="text/javascript">
+            var req;
             $(document).ready(function() {
                 $("#login").click(function() {
-                    var action = ""; //$("#form1").attr('action');
+                    $("#message").html("");
+                    var action = "https://xxxx.execute-api.ap-northeast-2.amazonaws.com/demo/auth"; //$("#form1").attr('action');
                     var form_data = {
                         username: $("#user_id").val(),
                         password: $("#user_pw").val(),
@@ -23,16 +24,89 @@
                         url: action,
                         data: form_data,
                         success: function(response) {
-                            if(response == 'success') {
-                                $("#message").html("<p style='color:green;font-weight:bold'>로그인 성공!</p>");
-                                $("#form1").slideUp('slow');
-                            }
-                            else {
-                                $("#message").html("<p style='color:red'>아이디 또는 비밀번호가 잘못되었습니다.</p>");	
+                            console.log(response);
+                            if(response && response.body) {
+                                req = JSON.parse(response.body);
+                                $("#message").html("<p style='color:green;font-weight:bold'>" + req.ReqId +"</p>");	
                             }
                         }
                     });
                     return false;
+                });
+
+                $("#getPet").click(function() {
+                    if(req) {                        
+                        // var apigClient = apigClientFactory.newClient();
+                        
+                        // var params = {
+                        // // This is where any modeled request parameters should be added.
+                        // // The key is the parameter name, as it is defined in the API in API Gateway.
+                        // type: '',
+                        // page: ''
+                        // };
+
+                        // var body = {
+                        // // This is where you define the body of the request,
+                        // };
+
+                        // var additionalParams = {
+                        //     // If there are any unmodeled query parameters or headers that must be
+                        //     //   sent with the request, add them here.
+                        //     headers: {
+                        //         Authorization: req.ReqId
+                        //     }
+                        // };
+
+                       
+                        
+                        // apigClient.petsGet(params, body, additionalParams)
+                        //     .then(function(result){
+                        //     // Add success callback code here.
+                        //         if(result) {
+                        //             $("#pet").html("<p style='color:red;font-weight:bold'>" + result +"</p>");	
+                        //         } else {
+                        //             alert('result is null');
+                        //         }
+                        //     }).catch( function(result){
+                        //     // Add error callback code here.
+                        //         alert(result); 
+                        //     });
+
+                        /////////////////////////////
+                        
+                        $("#pet").html("");
+                        var action = "https://xxxxx.execute-api.ap-northeast-2.amazonaws.com/stg/authdemo";
+                        console.log(req.ReqId)
+                        $.ajax({
+                            type: "GET",
+                            // async: false,
+                            crossDomain: true,
+                            // dataType: 'jsonp',
+                            url: action,
+                            // headers:{
+                            //     'Access-Control-Allow-Origin': '*',
+                            //     'Authorization': req.ReqId,
+                            // },
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("Content-type","application/json");
+                                // xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+                                // xhr.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                                xhr.setRequestHeader("Authorization", req.ReqId);
+                            },
+                            success: function(response) {
+                                console.log(response);
+                                if(response) {
+                                    $("#pet").html("<p style='color:red;font-weight:bold'>" + JSON.stringify(response) +"</p>");	
+                                }
+                            },
+                            error: function(xhr, status, error){
+                                alert(status);
+                                console.log(error);
+                            }
+                        });
+                    } else {
+                        alert("Login First...");
+                    }
                 });
             });
         </script>
@@ -49,5 +123,16 @@
                 </tr>
             </table>
         </form>
-    </body> 
+        <div id="message" name="message"></div>
+        <div id="getpets" name="getpets">
+            <form id="form2" name="form2" action="main.html" method="post">
+                <table>
+                    <tr>
+                        <td><input type='button' id='getPet' tabindex='4' value='GET API' style='height:50px'/></td>
+                    </tr>
+                </table>
+            </form>
+            <div id="pet" name="pet"></div>
+        </div>
+    </body>  
 </html>
